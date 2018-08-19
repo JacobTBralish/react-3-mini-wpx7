@@ -6,7 +6,7 @@ import axios from 'axios'
 // Create Unique Api Key
 let apiConfig = {
   headers: {
-    apikey: ''
+    apikey: 'Ilift'
   }
 }
 
@@ -38,15 +38,30 @@ class App extends Component {
   }
 
   componentDidMount(){
+    this.getGods();
   }
 
   getGods(){
     // axios (GET)
+    axios.get(baseUrl, apiConfig).then(gods => {
+      this.setState({
+        gods: gods.data,
+        oneGod: [],
+        create:false
+      })
+    })
     // setState with response -> gods
   }
 
   getOneGod(id){
     // axios (GET)
+    axios.get(`${baseUrl}/${id}`, apiConfig).then(gods => {
+      console.log(gods.data)
+      this.setState({
+        oneGod: gods.data,
+        gods: []
+      })
+    })
     // setState with response -> oneGod
   }
 
@@ -54,6 +69,13 @@ class App extends Component {
     const { name } = this.state
     const { id } = this.state.oneGod
     // axios (PATCH)
+    axios.patch(`${baseUrl}/${id}`, {name: name}, apiConfig).then(god =>{
+      this.setState({
+        oneGod:god.data,
+        editName:false,
+        name:''
+      })
+    })
     // setState with ????????????????
   }
 
@@ -66,11 +88,30 @@ class App extends Component {
       powers: this.state.power
     }
     // axios (POST)
+    axios.post(baseUrl ,newGod ,apiConfig).then(gods => this.updateState(gods))
     // setState with ????????????????
+  }
+
+  updateState(response){
+    this.setState({
+      gods: response.data,
+      demigod: false,
+      create: false,
+      name: '',
+      origin:'',
+      image: '',
+      power:''
+    })
   }
 
   deleteGod(id){
     // axios (DELETE)
+    axios.delete(`${baseUrl}/${id}`, apiConfig).then(gods =>{
+      this.setState({
+        gods: gods.data,
+        oneGod: {}
+      })
+    })
     // setState with ?????????????????
   }
 
